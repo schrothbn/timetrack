@@ -18,20 +18,26 @@
                     </div>
                     <div class="h-7 w-7 p-3 rounded-full flex justify-center items-center cursor-pointer
                         border-2 border-transparent
+                    bg-primary-light shadow-lg text-white hover:text-primary-light hover:bg-white hover:border-primary-light" @click="updateProject" >
+                        <fa icon="save" />
+                    </div>
+                    <div class="h-7 w-7 p-3 rounded-full flex justify-center items-center cursor-pointer
+                        border-2 border-transparent
                     bg-primary-light shadow-lg text-white hover:text-primary-light hover:bg-white hover:border-primary-light" @click="deleteProject" >
                         <fa icon="trash" />
                     </div>
 
                 </div>
-                <input v-if="edit" type="text" class="mt-6 p-2 w-full text-gray-500 focus:outline-none" v-model="project.name">
-                <h1 v-else class="text-primary-light text-2xl">{{project.name}}</h1>
-                <input v-if="edit" type="text" class="mt-6 p-2 w-full text-gray-500 focus:outline-none" v-model="project.description">
-                <p v-else class="text-primary-light text-sm">{{project.description}}</p>
+                <input v-if="edit" type="text" class="mt-7 p-2 w-full text-gray-500 focus:outline-none" v-model="project.name">
+                <h1 v-else class="mt-6 text-primary-light text-2xl">{{project.name}}</h1>
+                <input v-if="edit" type="text" class="mt-2 p-2 w-full text-gray-500 focus:outline-none" v-model="project.description">
+                <p v-else class="mt-2 text-primary-light text-sm">{{project.description}}</p>
 
             </div>
             <!-- Task info -->
             <div class="mt-10 p-8 rounded-md shadow-md flex flex-col items-start bg-secondary-light">
                 <h1 class="text-primary-light text-2xl">Tasks</h1>
+                <hr class="w-full border-1 border-primary"/>
                 <div v-for="(task,idx) in tasks" class="flex flex-col gap-x-6 relative sm:flex-row w-full" :key="idx">
                     <div class="flex flex-2 flex-col md:w-1/3">
                         <label for="task-name" class="mb-1 text-sm text-primary-light">Name</label>
@@ -50,12 +56,10 @@
                     </div>
 
                     <fa v-if="edit" icon="trash" @click="deleteTask(idx)" class="text-primary-light absolute h-4 w-auto -left-5 hover:text-black cursor-pointer"/>
-
+                    <hr class="sm:w-full sm:hidden md:hidden border-1 border-primary"/>
                 </div>
                 <button v-if="edit" type="button" @click="addTask" class="mt-6 px-2 py-3 bg-primary-light text-white border-2 border-transparent rounded-md shadow-lg hover:text-primary-light hover:bg-white hover:border-primary-light">Add new task</button>
             </div>
-            <!-- Update Project  -->
-            <button type="button" @click="updateProject" class="mt-6 px-2 py-3 bg-primary-light text-white border-2 border-transparent rounded-md shadow-lg hover:text-primary-light hover:bg-white hover:border-primary-light">Save</button>
         </div> 
     </div>
 </template>
