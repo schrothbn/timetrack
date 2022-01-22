@@ -1,0 +1,216 @@
+<template>
+    <div class="max-w-screen-md mx-auto px-4 py-10">
+        <!-- App Msg -->
+        <div v-if="statusMsg || errorMsg" class="mb-10 p-4 bg-secondary-light rounded-md shadow-lg">
+            <p v-if="statusMsg" class="text-primary-light">{{statusMsg}}</p>
+            <p class="text-red-500" v-if="errorMsg">{{errorMsg}}</p>
+        </div>
+
+        <!-- Project data -->
+        <div v-if="dataLoaded">
+            <!-- Project info -->
+            <div  class="flex flex-col p-4 bg-secondary-light rounded-md shadow-lg items-center relative">
+                <div v-if="user && project.user == user.id" class="flex absolute left-2 top-2 gap-x-2">
+                    <div class="h-7 w-7 p-3 rounded-full flex justify-center items-center cursor-pointer
+                        border-2 border-transparent
+                    bg-primary-light shadow-lg text-white hover:text-primary-light hover:bg-white hover:border-primary-light" @click="editMode" >
+                        <fa icon="edit" />
+                    </div>
+                    <div class="h-7 w-7 p-3 rounded-full flex justify-center items-center cursor-pointer
+                        border-2 border-transparent
+                    bg-primary-light shadow-lg text-white hover:text-primary-light hover:bg-white hover:border-primary-light" @click="deleteProject" >
+                        <fa icon="trash" />
+                    </div>
+
+                </div>
+                <input v-if="edit" type="text" class="mt-6 p-2 w-full text-gray-500 focus:outline-none" v-model="project.name">
+                <h1 v-else class="text-primary-light text-2xl">{{project.name}}</h1>
+                <input v-if="edit" type="text" class="mt-6 p-2 w-full text-gray-500 focus:outline-none" v-model="project.description">
+                <p v-else class="text-primary-light text-sm">{{project.description}}</p>
+
+            </div>
+            <!-- Task info -->
+            <div class="mt-10 p-8 rounded-md shadow-md flex flex-col items-start bg-secondary-light">
+                <h1 class="text-primary-light text-2xl">Tasks</h1>
+                <div v-for="(task,idx) in tasks" class="flex flex-col gap-x-6 relative sm:flex-row w-full" :key="idx">
+                    <div class="flex flex-2 flex-col md:w-1/3">
+                        <label for="task-name" class="mb-1 text-sm text-primary-light">Name</label>
+                        <input v-if="edit" id="task-name" type="text" class="text-gray-500 w-full focus:outline-none" v-model="task.name" />
+                        <p v-else >{{task.name}}</p>
+                    </div>
+                    <div class="flex flex-1 flex-col">
+                        <label for="done" class="mb-1 text-sm text-primary-light">Done</label>
+                        <input v-if="edit" id="done" type="checkbox" class="text-gray-500 w-full focus:outline-none" v-model="task.done" />
+                        <p v-else :class="{ 'text-red-500' : !task.done, 'text-green-500' : task.done}" >{{task.done ? 'Yes' : 'No'}}</p>
+                    </div>
+                    <div class="flex flex-2 flex-col md:w-1/3">
+                        <label for="deadline" class="mb-1 text-sm text-primary-light">Deadline</label>
+                        <input v-if="edit" id="deadline" type="datetime-local" class="text-gray-500 w-full focus:outline-none" v-model="task.deadline" />
+                        <p v-else >{{task.deadline}}</p>
+                    </div>
+
+                    <fa v-if="edit" icon="trash" @click="deleteTask(idx)" class="text-primary-light absolute h-4 w-auto -left-5 hover:text-black cursor-pointer"/>
+
+                </div>
+                <button v-if="edit" type="button" @click="addTask" class="mt-6 px-2 py-3 bg-primary-light text-white border-2 border-transparent rounded-md shadow-lg hover:text-primary-light hover:bg-white hover:border-primary-light">Add new task</button>
+            </div>
+            <!-- Update Project  -->
+            <button type="button" @click="updateProject" class="mt-6 px-2 py-3 bg-primary-light text-white border-2 border-transparent rounded-md shadow-lg hover:text-primary-light hover:bg-white hover:border-primary-light">Save</button>
+        </div> 
+    </div>
+</template>
+
+<script>
+import { ref, computed } from 'vue'
+import { supabase } from '@/supabase/init';
+import { useRoute, useRouter } from 'vue-router';
+import store from '@/store/index'
+
+export default {
+    name : 'ViewProject',
+    setup() {
+        // Create data / vars
+        const project = ref(null);
+        const tasks = ref(null);
+        const dataLoaded = ref(null);
+        const errorMsg = ref(null);
+        const statusMsg = ref(null);
+        const route = useRoute();
+        const router = useRouter();
+        const user = computed(() => store.state.user);
+        const deletedTaskIds = [];
+
+        // Get current Id from route
+        const id = route.params.id;
+
+        // Get project data
+        const loadData = async () => {
+            try {
+                dataLoaded.value = false;
+                const {data, error} = await supabase.from('projects').select('*').eq('id', id);
+                if (error) throw error;
+                const {data:taskData, taskError} = await supabase.from('tasks').select('*').eq('project', id);
+                if (taskError) throw taskError;
+                project.value = data[0];
+                tasks.value = taskData;
+                dataLoaded.value = true;
+                console.log(data);
+            } catch (error) {
+                errorMsg.value = error.message;
+                setTimeout(() => errorMsg.value = false, 5000);
+            }
+        }
+
+        loadData()
+        // Delete project
+        const deleteProject = async () => {
+            try {
+                const {error } = await supabase
+                    .from('projects')
+                    .delete()
+                    .eq('id', id)
+                if (error) throw error;
+                router.push({name: 'Home'});
+            } catch(error) {
+                errorMsg.value = `Error: ${error.message}`;
+                setTimeout(() => {
+                    errorMsg.value = false;
+                }, 5000);
+            }
+
+        }
+
+        // Edit mode
+        const edit = ref(null);
+        
+        const editMode = () => {
+            edit.value = !edit.value;
+        };
+
+        // Add task
+        const addTask = () => {
+            tasks.value.push({
+                name: '',
+                done: false,
+                deadline: null, 
+                project: id,
+            });
+        };
+        // Delete task
+        const deleteTask =  async (idx) => {
+            try {
+                const id = tasks.value[idx].id;
+                if (id) {
+                    const { error } = await supabase.from('tasks').delete().eq('id', id);
+                    if (error) throw error;
+                }
+
+                tasks.value.splice(idx, 1);
+            } catch (error) { 
+                errorMsg.value = `Can't delete task: ${error.message}`;
+                setTimeout(() => {
+                    errorMsg.value = false;
+                }, 5000);
+            }
+        };
+
+        const updateTasks = async () => {
+            try {
+                          } catch (error) {
+                return error;
+            }
+        }
+
+        // Update project
+        const updateProject = async () => {
+            try {
+                // Tasks with an id are already saved to database
+                const updatableTasks = tasks.value.filter(it => it.id);
+                // Tasks without an id are not in db yet
+                const insertableTasks = tasks.value.filter(it => !it.id);
+                // Upsert existing tasks
+                const {error: updateError} = await supabase.from('tasks').upsert(updatableTasks);
+                if (updateError) throw updateError;
+                // Insert non-existing tasks
+                const {error: insertError} = await supabase.from('tasks').insert(insertableTasks);
+                if (insertError) throw insertError;
+                // Update the root object (project)
+                const {error: projError} = await supabase.from('projects').update(project.value).eq('id', project.value.id);
+                if (projError) throw projError;
+                statusMsg.value = 'Project updated';
+                setTimeout(() => {
+                    statusMsg.value = false;
+                }, 5000);
+                // Reload data
+                edit.value = false;
+                loadData();
+            } catch(error) {
+                errorMsg.value = `Error: ${error.message}`;
+                setTimeout(() => {
+                    errorMsg.value = false;
+                }, 5000)
+            }
+            
+
+        }
+
+
+        return {
+            dataLoaded,
+            project,
+            tasks,
+            errorMsg,
+            statusMsg,
+            user,
+            edit,
+            editMode,
+            addTask,
+            deleteTask,
+            deleteProject,
+            updateProject,
+        }
+
+    }
+
+}
+</script>
