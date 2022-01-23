@@ -55,7 +55,6 @@ export default {
     // Runs when there is an auth state change and
     // If user is logged in, this will fire
     supabase.auth.onAuthStateChange((_, session) => {
-      console.log('hello')
       store.methods.setUser(session);
       initTracking()
       appReady.value = true;
