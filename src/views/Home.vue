@@ -3,11 +3,7 @@
         <!-- No data -->
         <div v-if="projects.length === 0" class="w-full flex flex-col items-center">
             <h1 class="text-2xl text-primary">No projects created...</h1>
-            <router-link 
-            class="mt-6 py-2 px-6 bg-primary-light rounded-sm text-sm text-white duration-200 border-solid
-            border-2 border-transparent hover:border-primary-light hover:bg-white hover:text-primary-light"
-            :to="{name: 'CreateProject'}">Create Project</router-link>
-
+        
         </div>
         <!-- Data -->
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
@@ -28,6 +24,14 @@ v-for="(project, idx) in projects"
 
             </router-link>
         </div>
+        <div class="w-full items-center flex flex-col">
+            <router-link 
+            class="mt-6 py-2 px-6 bg-primary-light rounded-sm text-sm text-white duration-200 border-solid
+            border-2 border-transparent hover:border-primary-light hover:bg-white hover:text-primary-light"
+            :to="{name: 'CreateProject'}">Create New Project</router-link>
+
+        </div>
+        
     </div>
 </template>
 <script setup>
