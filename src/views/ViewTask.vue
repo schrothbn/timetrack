@@ -37,7 +37,8 @@
             <hr/>
 
             <hr class="sm:w-full border-1 border-primary"/>
-            <p class="font-bold text-right">Total time spent: {{calculateTimeSpent(task.trackings)}}</p>
+            <p v-if="task.trackings.length > 0" class="font-bold text-right">Total time spent: {{calculateTimeSpent(task.trackings)}}</p>
+            <p v-else>You never spent time on this task...</p>
         </div>
 
     </div>
@@ -94,12 +95,14 @@ export default {
         }
 
         const calculateTimeSpent = (trackings) => {
-            const sum = trackings
-            .filter(it => it.endTime)
-            .map(it => calculateDifference(it.endTime, it.startTime))
-            .reduce((pv,cv) => pv+cv);
-            const { hours, minutes, seconds} = toTime(sum);
-            return `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+            if (trackings.length > 0) {
+                const sum = trackings
+                .filter(it => it.endTime)
+                .map(it => calculateDifference(it.endTime, it.startTime))
+                .reduce((pv,cv) => pv+cv);
+                const { hours, minutes, seconds} = toTime(sum);
+                return `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+            }
         }
 
         return {
