@@ -95,14 +95,15 @@ export default {
         }
 
         const calculateTimeSpent = (trackings) => {
-            if (trackings.length > 0) {
-                const sum = trackings
-                .filter(it => it.endTime)
-                .map(it => calculateDifference(it.endTime, it.startTime))
+            const finishedTrackings = trackings.filter(it => it.endTime);
+
+            if (finishedTrackings.length > 0) {
+                const sum = finishedTrackings.map(it => calculateDifference(it.endTime, it.startTime))
                 .reduce((pv,cv) => pv+cv);
                 const { hours, minutes, seconds} = toTime(sum);
                 return `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
             }
+            return 'None';
         }
 
         return {
