@@ -7,10 +7,10 @@
             <ul class="flex flex-1 justify-end gap-x-10">
                 <Tracker v-if="user" layout="small"/>
                 <router-link class="cursor-pointer hover:text-primary" :to="{name: 'Home'}">Projects</router-link>
-                <router-link class="cursor-pointer hover:text-primary" v-if="user" :to="{name: 'Tracker'}">Track</router-link>
-                <router-link class="cursor-pointer hover:text-primary" v-if="!user" :to="{name: 'Login'}">Login</router-link>
-                <router-link class="cursor-pointer hover:text-primary" v-if="!user" :to="{name: 'Register'}">Register</router-link>
-                <li class="cursor-pointer hover:text-primary" v-if="user" @click="doLogout">Logout</li>
+                <router-link v-if="user" class="cursor-pointer hover:text-primary" :to="{name: 'Tracker'}">Track</router-link>
+                <router-link v-if="!user" class="cursor-pointer hover:text-primary" :to="{name: 'Login'}">Login</router-link>
+                <router-link v-if="!user" class="cursor-pointer hover:text-primary" :to="{name: 'Register'}">Register</router-link>
+                <li v-if="user" class="cursor-pointer hover:text-primary" @click="doLogout">Logout</li>
             </ul>
         </nav>
     
@@ -25,6 +25,7 @@ import store from '@/store/'
 import Tracker from '@/components/Tracker.vue';
 
 export default {
+    name: 'NavigationComponent',
     components: {
         Tracker
     },
@@ -38,8 +39,13 @@ export default {
         
         // Logout function
         const doLogout = async () => {
-            const {error} = await supabase.auth.signOut();
-            router.push({name: 'Login'});
+            try {
+                const {error} = await supabase.auth.signOut();
+                if (error) throw error;
+                router.push({name: 'Login'});
+            } catch (error) {
+                console.warn(error);
+            }
         };
 
         return {

@@ -3,7 +3,7 @@
         <!-- App Msg -->
         <div v-if="statusMsg || errorMsg" class="mb-10 p-4 bg-secondary-light rounded-md shadow-lg">
             <p v-if="statusMsg" class="text-primary-light">{{statusMsg}}</p>
-            <p class="text-red-500" v-if="errorMsg">{{errorMsg}}</p>
+            <p v-if="errorMsg" class="text-red-500">{{errorMsg}}</p>
         </div>
 
         <!-- Project data -->
@@ -11,26 +11,29 @@
             <!-- Project info -->
             <div  class="flex flex-col p-4 bg-secondary-light rounded-md shadow-lg items-center relative">
                 <div v-if="user && project.user == user.id" class="flex absolute left-2 top-2 gap-x-2">
-                    <div class="h-7 w-7 p-3 rounded-full flex justify-center items-center cursor-pointer
+                    <div
+class="h-7 w-7 p-3 rounded-full flex justify-center items-center cursor-pointer
                         border-2 border-transparent
                     bg-primary-light shadow-lg text-white hover:text-primary-light hover:bg-white hover:border-primary-light" @click="editMode" >
-                        <fa icon="edit" />
+                        <FaIcon icon="edit" />
                     </div>
-                    <div class="h-7 w-7 p-3 rounded-full flex justify-center items-center cursor-pointer
+                    <div
+class="h-7 w-7 p-3 rounded-full flex justify-center items-center cursor-pointer
                         border-2 border-transparent
                     bg-primary-light shadow-lg text-white hover:text-primary-light hover:bg-white hover:border-primary-light" @click="updateProject" >
-                        <fa icon="save" />
+                        <FaIcon icon="save" />
                     </div>
-                    <div class="h-7 w-7 p-3 rounded-full flex justify-center items-center cursor-pointer
+                    <div
+class="h-7 w-7 p-3 rounded-full flex justify-center items-center cursor-pointer
                         border-2 border-transparent
                     bg-primary-light shadow-lg text-white hover:text-primary-light hover:bg-white hover:border-primary-light" @click="deleteProject" >
-                        <fa icon="trash" />
+                        <FaIcon icon="trash" />
                     </div>
 
                 </div>
-                <input v-if="edit" type="text" class="mt-7 p-2 w-full text-gray-500 focus:outline-none" v-model="project.name">
+                <input v-if="edit" v-model="project.name" type="text" class="mt-7 p-2 w-full text-gray-500 focus:outline-none">
                 <h1 v-else class="mt-6 text-primary-light text-2xl">{{project.name}}</h1>
-                <input v-if="edit" type="text" class="mt-2 p-2 w-full text-gray-500 focus:outline-none" v-model="project.description">
+                <input v-if="edit" v-model="project.description" type="text" class="mt-2 p-2 w-full text-gray-500 focus:outline-none">
                 <p v-else class="mt-2 text-primary-light text-sm">{{project.description}}</p>
 
             </div>
@@ -38,27 +41,27 @@
             <div class="mt-10 p-8 rounded-md shadow-md flex flex-col items-start bg-secondary-light">
                 <h1 class="text-primary-light text-2xl">Tasks</h1>
                 <hr class="w-full border-1 border-primary"/>
-                <div v-for="(task,idx) in tasks" class="flex flex-col gap-x-6 relative sm:flex-row w-full" :key="idx">
+                <div v-for="(task,idx) in tasks" :key="idx" class="flex flex-col gap-x-6 relative sm:flex-row w-full">
                     <div class="flex flex-2 flex-col md:w-1/3">
                         <label for="task-name" class="mb-1 text-sm text-primary-light">Name</label>
-                        <input v-if="edit" id="task-name" type="text" class="text-gray-500 w-full focus:outline-none" v-model="task.name" />
+                        <input v-if="edit" id="task-name" v-model="task.name" type="text" class="text-gray-500 w-full focus:outline-none" />
                         <p v-else >{{task.name}}</p>
                     </div>
                     <div class="flex flex-1 flex-col">
                         <label for="done" class="mb-1 text-sm text-primary-light">Done</label>
-                        <input v-if="edit" id="done" type="checkbox" class="text-gray-500 w-full focus:outline-none" v-model="task.done" />
+                        <input v-if="edit" id="done" v-model="task.done" type="checkbox" class="text-gray-500 w-full focus:outline-none" />
                         <p v-else :class="{ 'text-red-500' : !task.done, 'text-green-500' : task.done}" >{{task.done ? 'Yes' : 'No'}}</p>
                     </div>
                     <div class="flex flex-2 flex-col md:w-1/3">
                         <label for="deadline" class="mb-1 text-sm text-primary-light">Deadline</label>
-                        <input v-if="edit" id="deadline" type="datetime-local" class="text-gray-500 w-full focus:outline-none" v-model="task.deadline" />
+                        <input v-if="edit" id="deadline" v-model="task.deadline" type="datetime-local" class="text-gray-500 w-full focus:outline-none" />
                         <p v-else >{{task.deadline}}</p>
                     </div>
 
-                    <fa v-if="edit" icon="trash" @click="deleteTask(idx)" class="text-primary-light absolute h-4 w-auto -left-5 hover:text-black cursor-pointer"/>
+                    <FaIcon v-if="edit" icon="trash" class="text-primary-light absolute h-4 w-auto -left-5 hover:text-black cursor-pointer" @click="deleteTask(idx)"/>
                     <hr class="sm:w-full sm:hidden md:hidden border-1 border-primary"/>
                 </div>
-                <button v-if="edit" type="button" @click="addTask" class="mt-6 px-2 py-3 bg-primary-light text-white border-2 border-transparent rounded-md shadow-lg hover:text-primary-light hover:bg-white hover:border-primary-light">Add new task</button>
+                <button v-if="edit" type="button" class="mt-6 px-2 py-3 bg-primary-light text-white border-2 border-transparent rounded-md shadow-lg hover:text-primary-light hover:bg-white hover:border-primary-light" @click="addTask">Add new task</button>
             </div>
         </div> 
     </div>
@@ -82,7 +85,6 @@ export default {
         const route = useRoute();
         const router = useRouter();
         const user = computed(() => store.state.user);
-        const deletedTaskIds = [];
 
         // Get current Id from route
         const id = route.params.id;
@@ -157,13 +159,6 @@ export default {
                 }, 5000);
             }
         };
-
-        const updateTasks = async () => {
-            try {
-                          } catch (error) {
-                return error;
-            }
-        }
 
         // Update project
         const updateProject = async () => {

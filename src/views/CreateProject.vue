@@ -8,20 +8,21 @@
 
         <!-- Input Form  -->
         <div class="p-8 flex items-start bg-secondary-light rounded-md shadow-lg">
-            <form @submit.prevent="createProject" class="flex flex-col gap-y-5 w-full">
+            <form class="flex flex-col gap-y-5 w-full" @submit.prevent="createProject">
                 <h1 class="text-2xl text-primary-light">Create Project</h1>
 
                 <div class="flex flex-col">
                     <label for="project-name" class="mb-1 text-sm text-primary-light">Project Name</label>
-                    <input type="text" class="p-2 text-gray-500 focus:outline-none" v-model="projectName" required id="project-name" />
+                    <input id="project-name" v-model="projectName" type="text" class="p-2 text-gray-500 focus:outline-none" required />
                 </div>
                 <div class="flex flex-col">
                     <label for="project-description" class="mb-1 text-sm text-primary-light">Description</label>
-                    <input type="text" class="p-2 text-gray-500 focus:outline-none" v-model="projectDescription" required id="project-description" />
+                    <input id="project-description" v-model="projectDescription" type="text" class="p-2 text-gray-500 focus:outline-none" required />
                 </div>
 
 
-                <button type="submit" class="bg-primary-light text-white 
+                <button
+type="submit" class="bg-primary-light text-white 
                 border-2 border-transparent
                 hover:border-primary-light hover:bg-white hover:text-primary-light">Submit</button>
 
@@ -38,7 +39,7 @@ import store from '@/store/index'
 import { supabase } from '@/supabase/init'
 
 export default {
-    name: 'CreateProject',
+    name: 'CreateProjectPage',
     setup() {
         const errorMsg = ref(null);
         const statusMsg = ref(null);

@@ -11,10 +11,11 @@
         </div>
         <!-- Data -->
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-            <router-link class="flex flex-col items-center bg-secondary-light p-8 shadow-md cursor-pointer"
-                :to="{name: 'ViewProject', params: {id: project.id }}"
-                v-for="(project, idx) in projects"
+            <router-link
+v-for="(project, idx) in projects"
                 :key="idx"
+                class="flex flex-col items-center bg-secondary-light p-8 shadow-md cursor-pointer"
+                :to="{name: 'ViewProject', params: {id: project.id }}"
             >
             <!-- Project image -->
 

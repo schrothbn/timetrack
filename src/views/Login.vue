@@ -5,19 +5,20 @@
             <p class="text-red-500">{{errorMsg}}</p>
         </div>
         <!-- Registration Form -->
-        <form @submit.prevent="doLogin" class="p-8 flex flex-col bg-secondary-light rounded-md shadow-lg">
+        <form class="p-8 flex flex-col bg-secondary-light rounded-md shadow-lg" @submit.prevent="doLogin">
             <h1 class="text-3xl text-primary-light mb-4">Login</h1>
 
             <div class="flex flex-col mb-2">
                 <label for="email" class="mb-1 text-sm text-primary-light">E-Mail:</label>
-                <input type="text" class="p-2 text-gray-500 focus:outline-none" id="email" v-model="email" required />
+                <input id="email" v-model="email" type="text" class="p-2 text-gray-500 focus:outline-none" required />
             </div>
             <div class="flex flex-col mb-2">
                 <label for="password" class="mb-1 text-sm text-primary-light">Password:</label>
-                <input type="password" class="p-2 text-gray-500 focus:outline-none" id="password" v-model="password" required />
+                <input id="password" v-model="password" type="password" class="p-2 text-gray-500 focus:outline-none" required />
             </div>
 
-            <button type="submit" class="mt-6 py-2 px-6 rounded-sm self-start text-sm text-white bg-primary-light duration-200 border-solid border-2 
+            <button
+type="submit" class="mt-6 py-2 px-6 rounded-sm self-start text-sm text-white bg-primary-light duration-200 border-solid border-2 
             border-transparent
             hover:border-white hover:bg-white hover:text-primary-light">Login</button>
 
@@ -32,7 +33,7 @@ import { useRouter } from 'vue-router';
 import { ref } from 'vue'
 import { supabase } from '@/supabase/init'
 export default {
-    name: 'login',
+    name: 'LoginPage',
     setup() {
         // Create data / vars
         const router = useRouter();
