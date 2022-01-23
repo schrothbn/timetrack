@@ -5,7 +5,6 @@
                 <h1 class="w-14 text-lg cursor-pointer hover:text-primary">TimeTrack</h1>
             </div>
             <ul class="flex flex-1 justify-end gap-x-10">
-                <Tracker v-if="user" layout="small"/>
                 <router-link class="cursor-pointer hover:text-primary" :to="{name: 'Home'}">Projects</router-link>
                 <router-link v-if="user" class="cursor-pointer hover:text-primary" :to="{name: 'Tracker'}">Track</router-link>
                 <router-link v-if="!user" class="cursor-pointer hover:text-primary" :to="{name: 'Login'}">Login</router-link>
@@ -22,12 +21,10 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router';
 import { supabase } from '@/supabase/init';
 import store from '@/store/'
-import Tracker from '@/components/Tracker.vue';
 
 export default {
     name: 'NavigationComponent',
     components: {
-        Tracker
     },
     setup() {
         // Get user from store
