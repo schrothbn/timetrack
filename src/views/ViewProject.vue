@@ -45,8 +45,9 @@ class="h-7 w-7 p-3 rounded-full flex justify-center items-center cursor-pointer
                     <div class="flex flex-2 flex-col md:w-1/3">
                         <label for="task-name" class="mb-1 text-sm text-primary-light">Name</label>
                         <input v-if="edit" id="task-name" v-model="task.name" type="text" class="text-gray-500 w-full focus:outline-none" />
-                        <router-link v-if="!edit && task.id" :to="{name: 'ViewTask', params: { id: task.id }}">{{task.name}}</router-link>
+                        <router-link v-else-if="!edit && task.id" :to="{name: 'ViewTask', params: { id: task.id }}">{{task.name}}</router-link>
                         <p v-else >{{task.name}}</p>
+
                     </div>
                     <div class="flex flex-1 flex-col">
                         <label for="done" class="mb-1 text-sm text-primary-light">Done</label>
