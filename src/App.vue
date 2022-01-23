@@ -29,18 +29,25 @@ export default {
       appReady.value = true;
     }
 
-    const initProjects = async () => {
+    const initTracking = async () => {
       if (store.state.user) {
         const userId = store.state.user.id;
         try {
-          const { data, error }= await supabase.from('projects').select('*').eq('user', userId);
+          const { data, error} = await supabase.from('projects')
+          .select('tasks ( trackings!inner(*))')
+          .eq('user', userId)
+          .is('tasks.trackings.endTime', null);
           if (error) throw error
-          store.methods.setProjects(data);
+          if (data) {
+            console.log(data);
+            store.methods.startTracking(data[0].tasks[0].trackings[0].id);
+          }
+
         } catch(error) {
           console.warn(error.message)
         }
       } else {
-        store.methods.setProjects(null);
+        store.methods.stopTracking();
       }
 
     }
@@ -50,7 +57,7 @@ export default {
     supabase.auth.onAuthStateChange((_, session) => {
       console.log('hello')
       store.methods.setUser(session);
-      initProjects()
+      initTracking()
       appReady.value = true;
     });
 
